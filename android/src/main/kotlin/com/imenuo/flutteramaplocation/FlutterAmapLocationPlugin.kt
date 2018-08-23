@@ -159,19 +159,19 @@ class FlutterAmapLocationPlugin(
         var requestCode = 9999
     }
 
-    private val permissions: Array<String> by lazy {
+    private val permissions: MutableSet<String> by lazy {
         val allPermissions = setOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.READ_PHONE_STATE)
         activity.packageManager
                 .getPackageInfo(activity.packageName, PackageManager.GET_PERMISSIONS)
                 .requestedPermissions
                 .filter { allPermissions.contains(it) }
-                .toTypedArray()
+                .toMutableSet()
     }
+
     private val locationClient = AMapLocationClient(registrar.activity())
     private val eventChannel: EventChannel = EventChannel(registrar.messenger(),
             "imenuo.com/flutter_amap_location_events")
@@ -224,7 +224,7 @@ class FlutterAmapLocationPlugin(
     }
 
     private fun requestPermissions() {
-        ActivityCompat.requestPermissions(activity, permissions, requestCode)
+        ActivityCompat.requestPermissions(activity, permissions.toTypedArray(), requestCode)
     }
 
     private fun onRequestDenied() {
@@ -286,13 +286,16 @@ class FlutterAmapLocationPlugin(
                 }
             }
             "startLocation" -> {
+                val option = parseAMapLocationClientOption(arguments as MutableMap<*, *>)
+                if (option.isLocationCacheEnable)
+                    permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 if (checkSelfPermissions()) {
-                    startLocation(arguments)
+                    startLocation(option)
                     result.success(null)
                 } else {
                     pendingAction = {
                         if (it) {
-                            startLocation(arguments)
+                            startLocation(option)
                             result.success(null)
                         } else {
                             result.error("ERROR", "permissions denied", null)
@@ -309,10 +312,9 @@ class FlutterAmapLocationPlugin(
         }
     }
 
-    private fun startLocation(arguments: Any) {
+    private fun startLocation(option: AMapLocationClientOption) {
         locationClient.stopLocation()
-        if (arguments !is MutableMap<*, *>) throw IllegalArgumentException()
-        locationClient.setLocationOption(parseAMapLocationClientOption(arguments))
+        locationClient.setLocationOption(option)
         locationClient.setLocationListener {
             sink?.success(it.toFlutterMap())
         }
