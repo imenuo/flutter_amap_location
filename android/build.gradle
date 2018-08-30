@@ -43,7 +43,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //noinspection GradleDependency
-    implementation 'com.amap.api:location:latest.integration'
+    api 'com.amap.api:location:latest.integration'
 
     implementation 'com.android.support:support-compat:27.1.1'
 }

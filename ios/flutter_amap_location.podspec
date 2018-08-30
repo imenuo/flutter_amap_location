@@ -16,6 +16,40 @@ A new flutter plugin project.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   
-  s.ios.deployment_target = '8.0'
-end
+  s.frameworks = 'JavaScriptcore', 'SystemConfiguration', 'CoreTelephony', 'CoreLocation', 'Security', 'ExternalAccessory'
+  s.libraries = 'z', 'c++', 'stdc++.6.0.9'
+  
+  s.vendored_frameworks = 'Vendors/*.framework'
+  s.preserve_paths = 'Vendors/*.framework'
+  s.pod_target_xcconfig = { 'LD_RUNPATH_SEARCH_PATHS' => '$(PODS_ROOT)/Vendors/' }
+  
+  s.ios.deployment_target = '9.0'
+  
+  s.prepare_command = <<-EOF
+    rm -rf Vendors/AMapFoundationKit.framework/Modules
+    mkdir Vendors/AMapFoundationKit.framework/Modules
+    touch Vendors/AMapFoundationKit.framework/Modules/module.modulemap
+    cat <<-EOF > Vendors/AMapFoundationKit.framework/Modules/module.modulemap
+    framework module AMapFoundationKit {
+    umbrella header "AMapFoundationKit.h"
+    export *
+    link "z"
+    link "c++"
+    link "stdc++.6.0.9"
+    }
+    \EOF
 
+    rm -rf Vendors/AMapLocationKit.framework/Modules
+    mkdir Vendors/AMapLocationKit.framework/Modules
+    touch Vendors/AMapLocationKit.framework/Modules/module.modulemap
+    cat <<-EOF > Vendors/AMapLocationKit.framework/Modules/module.modulemap
+    framework module AMapLocationKit {
+      umbrella header "AMapLocationKit.h"
+      export *
+      link "z"
+      link "c++"
+      link "stdc++.6.0.9"
+    }
+    \EOF
+  EOF
+end

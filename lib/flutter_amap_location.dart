@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
-class FlutterAmapLocation {
-  static final FlutterAmapLocation _instance = FlutterAmapLocation._internal();
+class FlutterAMapLocation {
+  static final FlutterAMapLocation _instance = FlutterAMapLocation._internal();
   static const MethodChannel _channel =
       const MethodChannel('imenuo.com/flutter_amap_location');
   static const EventChannel _eventChannel =
@@ -14,11 +14,11 @@ class FlutterAmapLocation {
       .receiveBroadcastStream()
       .map((map) => AMapLocation._fromMap(map));
 
-  FlutterAmapLocation._internal();
+  FlutterAMapLocation._internal();
 
-  factory FlutterAmapLocation() => _instance;
+  factory FlutterAMapLocation() => _instance;
 
-  static FlutterAmapLocation get() => _instance;
+  static FlutterAMapLocation get() => _instance;
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
@@ -231,8 +231,9 @@ class AMapLocation {
         gpsAccuracyStatus: map['gpsAccuracyStatus'],
         latitude: map['latitude'],
         locationDetail: map['locationDetail'],
-        locationQualityReport:
-            AMapLocationQualityReport._fromMap(map['locationQualityReport']),
+        locationQualityReport: map['locationQualityReport'] != null
+            ? AMapLocationQualityReport._fromMap(map['locationQualityReport'])
+            : null,
         locationType: map['locationType'],
         longitude: map['longitude'],
         poiName: map['poiName'],
@@ -245,7 +246,9 @@ class AMapLocation {
         road: map['road'],
         isOffset: map['isOffset'],
         isFixLastLocation: map['isFixLastLocation'],
-        time: new DateTime.fromMillisecondsSinceEpoch(map['time']),
+        time: map['time'] != null
+            ? new DateTime.fromMillisecondsSinceEpoch(map['time'])
+            : null,
       );
 
   @override

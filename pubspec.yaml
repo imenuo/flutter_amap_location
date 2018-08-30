@@ -18,7 +18,7 @@ dependencies:
 flutter:
   plugin:
     androidPackage: com.imenuo.flutteramaplocation
-    pluginClass: FlutterAmapLocationPlugin
+    pluginClass: FlutterAMapLocationPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
