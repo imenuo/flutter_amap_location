@@ -147,13 +147,13 @@ fun parseAMapLocationClientOption(map: MutableMap<*, *>): AMapLocationClientOpti
 }
 
 
-class FlutterAmapLocationPlugin(
+class FlutterAMapLocationPlugin(
         registrar: Registrar
 ) : MethodCallHandler, EventChannel.StreamHandler, PluginRegistry.RequestPermissionsResultListener {
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
-            FlutterAmapLocationPlugin(registrar)
+            FlutterAMapLocationPlugin(registrar)
         }
 
         var requestCode = 9999
@@ -243,7 +243,7 @@ class FlutterAmapLocationPlugin(
 
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
-        if (requestCode != FlutterAmapLocationPlugin.requestCode) return false
+        if (requestCode != FlutterAMapLocationPlugin.requestCode) return false
         if (grantResults.size == permissions.size) {
             val granted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
             if (granted) {
